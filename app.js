@@ -14,7 +14,7 @@ let snake = [
     { x: 160, y: 200 },
     { x: 140, y: 200 },
     { x: 120, y: 200 }
-];
+  ];
 let food = getRandomFoodPosition();
 document.addEventListener('keydown', changeDirection);
 function main() {
