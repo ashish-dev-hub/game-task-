@@ -14,7 +14,8 @@ document.addEventListener('visibilitychange', function () {
         music.pause();
     }
 });
-         // Stop music when user moves to another window
+
+// Stop music when user moves to another window
 window.addEventListener('blur', function () {
 music.pause();
 });
@@ -129,7 +130,7 @@ function checkCollision() {
 
     if (hitLeftWall || hitRightWall || hitTopWall || hitBottomWall || hitSelf) {
         isGameOver = true;
-        music.pause();// pausing for music when it collides
+        music.pause();
         drawGameOver();
     }
 }
@@ -159,4 +160,59 @@ function restartGame() {
     ];
     food = getRandomFoodPosition();
     main();
+}
+
+let touchStartX = 0;
+let touchStartY = 0;
+canvas.addEventListener('touchstart', function (event) {
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+                                     
+    music.play();
+    event.preventDefault();
+});
+canvas.addEventListener('touchend', function (event) {
+    const touchEndX = event.changedTouches[0].clientX;
+    const touchEndY = event.changedTouches[0].clientY;
+
+    const differenceX = touchEndX - touchStartX;
+    const differenceY = touchEndY - touchStartY;
+
+    if (isGameOver) {
+        restartGame();
+        return;
+    }
+    if (Math.abs(differenceX) > Math.abs(differenceY)) {
+        if (differenceX > 0 && !goingLeft()) {
+            dx = gridSize;
+            dy = 0;
+        }
+        if (differenceX < 0 && !goingRight()) {
+            dx = -gridSize;
+            dy = 0;
+        }
+    }
+    else {
+        if (differenceY > 0 && !goingUp()) {
+            dx = 0;
+            dy = gridSize;
+        }
+        if (differenceY < 0 && !goingDown()) {
+            dx = 0;
+            dy = -gridSize;
+        }
+    }
+    event.preventDefault();
+});
+function goingUp() {
+    return dy === -gridSize;
+}
+function goingDown() {
+    return dy === gridSize;
+}
+function goingRight() {
+    return dx === gridSize;
+}
+function goingLeft() {
+    return dx === -gridSize;
 }
