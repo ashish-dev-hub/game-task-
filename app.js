@@ -6,8 +6,8 @@ const tileCount = canvas.width / gridSize;
 const appleImg = new Image();
 appleImg.src = 'assets/apple.png';
 let score = 0;
-let speed = 100;// line 9 is add for handling speed according to 
-const music = new Audio('assets/snake.wav');  // Line 10 and 11 is added to ad music
+let speed = 100;
+const music = new Audio('assets/snake.wav');
 music.loop = true;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -15,7 +15,6 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 
-// Stop music when user moves to another window
 window.addEventListener('blur', function () {
 music.pause();
 });
@@ -26,7 +25,6 @@ let snake = [
     { x: 160, y: 200 },
     { x: 140, y: 200 },
     { x: 120, y: 200 },
-    { x: 100, y: 200 }
   ];
 let food = getRandomFoodPosition();
 document.addEventListener('keydown', changeDirection);
@@ -38,7 +36,6 @@ function main() {
         moveSnake();
         drawSnake();
         checkCollision();
-        // music.play(); // Line 31 is added to ad music
         main();
     }, speed); 
 }
@@ -56,7 +53,24 @@ function drawSnake() {
     });
 }
 function moveSnake() {
-    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+    let newX = snake[0].x + dx;
+    let newY = snake[0].y + dy;
+    if (newX >= canvas.width) {
+        newX = 0;
+     }
+    if (newX < 0) {
+        newX = canvas.width - gridSize;
+     }
+    if (newY >= canvas.height) {
+        newY = 0;
+     }
+    if (newY < 0) {
+        newY = canvas.height - gridSize;
+     }
+    const head = {
+        x: newX,
+        y: newY
+      };
     snake.unshift(head);
     const hasEatenFood = snake[0].x === food.x && snake[0].y === food.y;
     if (hasEatenFood) {
@@ -64,9 +78,8 @@ function moveSnake() {
         scoreElement.textContent = score;
         speed = speed - 5;
         food = getRandomFoodPosition();
-    } 
-    else {
-        snake.pop(); 
+    } else {
+        snake.pop();
     }
 }
 function getRandomFoodPosition() {
@@ -84,7 +97,7 @@ function drawFood() {
 }
 function changeDirection(event) {
     const keyPressed = event.keyCode;
-     music.play(); // when player press a arrow key then the browser has user interaction, so the music can start.
+     music.play(); 
     const LEFT_KEY = 37;
     const UP_KEY = 38;
     const RIGHT_KEY = 39;
@@ -116,19 +129,14 @@ function changeDirection(event) {
     }
 }
 function checkCollision() {
-    const hitLeftWall = snake[0].x < 0;
-    const hitRightWall = snake[0].x >= canvas.width;
-    const hitTopWall = snake[0].y < 0;
-    const hitBottomWall = snake[0].y >= canvas.height;
     let hitSelf = false;
     for (let i = 4; i < snake.length; i++) {
         if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-          hitSelf = true;
-          break;
+            hitSelf = true;
+            break;
         }
     }
-
-    if (hitLeftWall || hitRightWall || hitTopWall || hitBottomWall || hitSelf) {
+    if (hitSelf) {
         isGameOver = true;
         music.pause();
         drawGameOver();
@@ -147,7 +155,7 @@ function drawGameOver() {
 function restartGame() {
     score = 0;
     speed = 100;
-    music.currentTime = 0;  // line 139 and 140m is use to play music again when it restart
+    music.currentTime = 0;  
     music.play();
     scoreElement.textContent = score;
     dx = gridSize;
@@ -164,13 +172,15 @@ function restartGame() {
 
 let touchStartX = 0;
 let touchStartY = 0;
+
 canvas.addEventListener('touchstart', function (event) {
     touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
-                                     
+
     music.play();
     event.preventDefault();
 });
+
 canvas.addEventListener('touchend', function (event) {
     const touchEndX = event.changedTouches[0].clientX;
     const touchEndY = event.changedTouches[0].clientY;
@@ -182,6 +192,7 @@ canvas.addEventListener('touchend', function (event) {
         restartGame();
         return;
     }
+
     if (Math.abs(differenceX) > Math.abs(differenceY)) {
         if (differenceX > 0 && !goingLeft()) {
             dx = gridSize;
