@@ -6,8 +6,8 @@ const tileCount = canvas.width / gridSize;
 const appleImg = new Image();
 appleImg.src = 'assets/apple.png';
 let score = 0;
-let speed = 100;
-const music = new Audio('assets/snake.wav');
+let speed = 100;// line 9 is add for handling speed according to 
+const music = new Audio('assets/snake.wav');  // Line 10 and 11 is added to ad music
 music.loop = true;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -15,6 +15,7 @@ document.addEventListener('visibilitychange', function () {
     }
 });
 
+// Stop music when user moves to another window
 window.addEventListener('blur', function () {
 music.pause();
 });
@@ -25,6 +26,7 @@ let snake = [
     { x: 160, y: 200 },
     { x: 140, y: 200 },
     { x: 120, y: 200 },
+    { x: 100, y: 200 }
   ];
 let food = getRandomFoodPosition();
 document.addEventListener('keydown', changeDirection);
@@ -97,7 +99,7 @@ function drawFood() {
 }
 function changeDirection(event) {
     const keyPressed = event.keyCode;
-     music.play(); 
+     music.play(); // when player press a arrow key then the browser has user interaction, so the music can start.
     const LEFT_KEY = 37;
     const UP_KEY = 38;
     const RIGHT_KEY = 39;
@@ -138,7 +140,7 @@ function checkCollision() {
     }
     if (hitSelf) {
         isGameOver = true;
-        music.pause();
+        music.pause();// pausing for music when it collides
         drawGameOver();
     }
 }
@@ -155,7 +157,7 @@ function drawGameOver() {
 function restartGame() {
     score = 0;
     speed = 100;
-    music.currentTime = 0;  
+    music.currentTime = 0;  // line 139 and 140m is use to play music again when it restart
     music.play();
     scoreElement.textContent = score;
     dx = gridSize;
